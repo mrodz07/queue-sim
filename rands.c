@@ -28,6 +28,18 @@ double *adjust_rands(int mod, int argc, int *rands)
 	return adj_rands;
 }
 
+double *adjust_rands_range(int mod, int argc, int *rands)
+{
+	double *adj_rands = malloc(sizeof(double) * argc);
+	int max_val = mod - 1; 
+
+	for (int i = 0; i < argc; i++) {
+		adj_rands[i] = (double)rands[i]/(max_val/2) + gen_rand(max_val);
+	}
+
+	return adj_rands;
+}
+
 int is_valid_gen(int seed, int mul, int inc, int mod)
 {
 	if (mod > 0 && mul >= 0 && mul < mod && inc >= 0 && inc < mod && seed >= 0 && seed < mod) 
