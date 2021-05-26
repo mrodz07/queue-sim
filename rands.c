@@ -78,3 +78,15 @@ void read_gen(int *seed, int *mul, int *inc, int *mod, int *num)
 	printf("%s", MSG_NUME);
 	*num = (int)read_num();
 }
+
+void read_gen_without_num(int *seed, int *mul, int *inc, int *mod)
+{
+	printf("%s", MSG_SEED);
+	*seed = (int)read_num();
+	printf("%s", MSG_MULT);
+	*mul = (int)read_num();
+	printf("%s", MSG_INCR);
+	*inc = (int)read_num();
+	printf("%s", MSG_MODI);
+	*mod = (int)read_num();
+}

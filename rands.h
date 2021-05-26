@@ -18,3 +18,4 @@ void read_gen(int *seed, int *mul, int *inc, int *mod, int *num);
 double* adjust_rands(int mod, int argc, int *rands);
 void calc_percentages(double step, int slices_num, double *slices, int argc, double *arr);
 double* adjust_rands_range(int mod, int argc, int *rands);
+void read_gen_without_num(int *seed, int *mul, int *inc, int *mod);
