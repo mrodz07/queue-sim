@@ -30,18 +30,27 @@ double *adjust_rands(int mod, int argc, int *rands)
 
 int gen_rand_num(int low, int up)
 {
-	srand(time(0));
-
 	return (rand() % (up - low + 1)) + low;
 }
 
-double *adjust_rands_range(int mod, int argc, int *rands)
+int gen_rand_sign()
+{
+	int sign = gen_rand_num(1, 2);
+
+	if(sign == 2)
+		sign = -1;
+
+	return sign;
+}
+
+double *adjust_rands_range(int mod, int argc, int low, int up, int *rands)
 {
 	double *adj_rands = malloc(sizeof(double) * argc);
 	int max_val = mod - 1; 
 
 	for (int i = 0; i < argc; i++) {
-		adj_rands[i] = (double)rands[i]/(max_val/2) + (max_val/2)*(gen_rand_num(1, 10)/10);
+		adj_rands[i] = ((double)rands[i]/max_val) + ((max_val/2)*(gen_rand_num(low, up)/10));
+		adj_rands[i] = adj_rands[i] * gen_rand_sign();
 	}
 
 	return adj_rands;
