@@ -1,5 +1,5 @@
 
-#include "A01732529.h"
+#include "rands.h"
 
 int gen_rand(int mul, int inc, int mod, int sum)
 {
@@ -28,13 +28,20 @@ double *adjust_rands(int mod, int argc, int *rands)
 	return adj_rands;
 }
 
+int gen_rand_num(int low, int up)
+{
+	srand(time(0));
+
+	return (rand() % (up - low + 1)) + low;
+}
+
 double *adjust_rands_range(int mod, int argc, int *rands)
 {
 	double *adj_rands = malloc(sizeof(double) * argc);
 	int max_val = mod - 1; 
 
 	for (int i = 0; i < argc; i++) {
-		adj_rands[i] = (double)rands[i]/(max_val/2) + gen_rand(max_val);
+		adj_rands[i] = (double)rands[i]/(max_val/2) + (max_val/2)*(gen_rand_num(1, 10)/10);
 	}
 
 	return adj_rands;
