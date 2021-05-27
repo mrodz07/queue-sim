@@ -9,6 +9,7 @@ int main()
 	int* rands;
 	double* drands;
 	double* arands;
+	double* srands;
 
   read_gen_without_num(&seed, &mul, &inc, &mod);
 	read_queue(&nc, &ns, &a, &s);
@@ -21,8 +22,14 @@ int main()
 		rands = gen_rand_arr(seed, mul, inc, mod, nc);
 		drands = adjust_rands_range(mod, nc, low, up, rands);
 		arands = calc_arrival_times(MINUTE, a, nc, drands);
+		drands = adjust_rands_range(mod, nc, low, up, rands);
+		srands = calc_service_times(MINUTE, s, nc, drands);
+		printf("Llegada de usuarios\n");
 		for(int i=0; i<nc; i++)
 			printf("%f\n", arands[i]);
+		printf("Tiempo de servicio\n");
+		for(int i=0; i<nc; i++)
+			printf("%f\n", srands[i]);
 	}
 	else
 	{
@@ -30,7 +37,18 @@ int main()
 	}
 }
 
-double* calc_arrival_times(int time, int a, int argc, double *arr)
+double* calc_service_times(int time, int s, int argc, double *rands)
+{
+	double* adjserv;
+	adjserv = malloc(sizeof(double) * argc);
+	double range = ((time/s)/2);
+	for(int i=0; i<argc; i++)
+		adjserv[i] = ((time/s) + (range * rands[i]));
+	
+	return adjserv;
+}
+
+double* calc_arrival_times(int time, int a, int argc, double *rands)
 {
 	double* adjarr;
 	adjarr = malloc(sizeof(double) * argc);
@@ -38,9 +56,9 @@ double* calc_arrival_times(int time, int a, int argc, double *arr)
 
 	for(int i=0; i<argc; i++) {
 		if(i>0)
-			adjarr[i] = adjarr[i-1] + ((time/a) + (range * arr[i]));
+			adjarr[i] = adjarr[i-1] + ((time/a) + (range * rands[i]));
 		else
-			adjarr[i] = ((time/a) + (range * arr[i]));
+			adjarr[i] = ((time/a) + (range * rands[i]));
 	}
 
 	return adjarr;
