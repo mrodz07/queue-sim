@@ -20,8 +20,7 @@ int main()
 
 		rands = gen_rand_arr(seed, mul, inc, mod, nc);
 		drands = adjust_rands_range(mod, nc, low, up, rands);
-		arands = calc_arrival_times(a, nc, drands);
-
+		arands = calc_arrival_times(MINUTE, a, nc, drands);
 		for(int i=0; i<nc; i++)
 			printf("%f\n", arands[i]);
 	}
@@ -31,14 +30,18 @@ int main()
 	}
 }
 
-double* calc_arrival_times(int a, int argc, double *arr)
+double* calc_arrival_times(int time, int a, int argc, double *arr)
 {
 	double* adjarr;
 	adjarr = malloc(sizeof(double) * argc);
-	double range = ((60/a)/2);
+	double range = ((time/a)/2);
 
-	for(int i=0; i<argc; i++)
-		adjarr[i] = range * arr[i];
+	for(int i=0; i<argc; i++) {
+		if(i>0)
+			adjarr[i] = adjarr[i-1] + ((time/a) + (range * arr[i]));
+		else
+			adjarr[i] = ((time/a) + (range * arr[i]));
+	}
 
 	return adjarr;
 }

@@ -1,6 +1,8 @@
 #include <stdio.h>
 #include "rands.h"
 
+#define MINUTE 60
+
 #define MSG_NC ""
 #define MSG_NS ""
 #define MSG_A ""
@@ -9,4 +11,4 @@
 
 int main();
 void read_queue(int *nc, int *ns, int *a, int *s);
-double* calc_arrival_times(int a, int argc, double *arr);
+double* calc_arrival_times(int time, int a, int argc, double *arr);
