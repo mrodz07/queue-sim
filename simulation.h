@@ -9,3 +9,4 @@
 
 int main();
 void read_queue(int *nc, int *ns, int *a, int *s);
+double* calc_arrival_times(int a, int argc, double *arr);
