@@ -11,7 +11,9 @@ int main()
 	double* crands;
 	double* srands;
 	sim_vals* vals;
-	pthread_mutex_t lock = PTHREAD_MUTEX_INITIALIZER;
+	pthread_t sim;
+	pthread_mutex_t lockc = PTHREAD_MUTEX_INITIALIZER;
+	pthread_mutex_t locks = PTHREAD_MUTEX_INITIALIZER;
 
   read_gen_without_num(&seed, &mul, &inc, &mod);
 	read_queue(&nc, &ns, &a, &s);
@@ -31,11 +33,11 @@ int main()
 		vals -> server_num = ns;
 		vals -> client_time = crands;
 		vals -> server_time = srands;
-		vals -> lock = &lock;
-		vals -> client_threads = malloc(sizeof(pthread_t) * nc);
-		vals -> server_threads = malloc(sizeof(pthread_t) * ns);
+		vals -> c_lock = &lockc;
+		vals -> s_lock = &locks;
 
-		start_simulation(vals);
+		pthread_create(&sim, NULL, start_simulation, (void*)vals);
+		pthread_join(sim, NULL);
 	}
 	else
 	{
@@ -43,35 +45,112 @@ int main()
 	}
 }
 
-void start_simulation(sim_vals* vals)
+void* start_simulation(void* args)
 {
+	sim_vals* vals = (sim_vals*)args;
+
 	pthread_t client_gen;
+	pthread_t server_gen;
+	server* servers;
+	client* clients;
+
+	pthread_create(&server_gen, NULL, server_generator, (void*)vals);
 	pthread_create(&client_gen, NULL, client_generator, (void*)vals);
-	pthread_join(client_gen, NULL);
+	pthread_join(client_gen, (void*)clients);
+	pthread_join(server_gen, NULL);
+
+	return NULL;
+}
+
+void* server_generator(void* args)
+{
+	sim_vals* vals = (sim_vals*)args;
+	server*		servers;
+	servers = malloc(sizeof(server) * vals -> server_num);
+	
+	for(int i=0; i<vals -> server_num; i++)
+	{
+		servers[i].server_id = i;
+		servers[i].client_threads = malloc(sizeof(client) * vals -> client_num);
+		servers[i].attend = &server_attend;
+		servers[i].response_times = vals -> server_time;
+		servers[i].lock = vals -> s_lock;
+		pthread_create(&(servers[i].server_thread), NULL, server_main, NULL);
+	}
+
+	while(1){
+	}
+
+	return NULL;
 }
 
 void* client_generator(void* args)
 {
 	sim_vals* vals = (sim_vals*)args;
+	client* clients;
+	client_thread_vals* client_vals;
+	clients = malloc(sizeof(client) * vals -> client_num);
+	client_vals = malloc(sizeof(client_thread_vals) * vals -> client_num);
 
 	for(int i=0; i<vals -> client_num; i++)
 	{
-		sleep(vals -> client_time[i] * TIME_SHORTENER);
-		pthread_create(&(vals -> client_threads[i]), NULL, client, (void*)vals);
+		clients[i].client_id = i; 
+		clients[i].waiting_time = vals -> client_time[i];
+		clients[i].wait = &client_wait;
+		clients[i].set_avail = &client_set_avail;
+		clients[i].lock = vals -> c_lock;
+		
+		client_vals[i].client_id = &clients[i].client_id;
+		client_vals[i].is_finished = &clients[i].is_finished;
+		client_vals[i].avail = &clients[i].avail;
+		client_vals[i].waiting_time = &clients[i].waiting_time;
+		client_vals[i].lock = clients[i].lock;
+
+		pthread_create(&(clients[i].client_thread), NULL, client_main, (void*)&client_vals[i]);
 	}
-	return NULL;
+
+	return clients;
 }
 	
-void* client(void* args)
+void* client_main(void* args)
+{
+	client_thread_vals* vals = (client_thread_vals*)args;
+
+	client_wait(*vals -> waiting_time);
+	pthread_mutex_lock(vals -> lock);
+		printf(CLIENT_ARRIVE_MSG, get_time(), *vals -> client_id);
+	pthread_mutex_unlock(vals -> lock);
+	client_set_avail(*vals -> avail);
+
+	while(!vals -> is_finished)
+	{
+		sleep(TIME_WAIT * TIME_SHORTENER);
+		printf(CLIENT_WAITING_MSG, get_time, *vals -> client_id);
+	}
+
+	return NULL;
+}
+
+void client_wait(double t)
+{
+	sleep(t * TIME_SHORTENER);
+}
+
+void client_set_avail(int a)
+{
+	a = 1;
+}
+
+void* server_main(void* args)
 {
 	sim_vals* vals = (sim_vals*)args;
-	int client_id = vals -> clients_arrived;
+	int i = 0;
 
-	printf(CLIENT_ARRIVE_MSG, get_time(), client_id);
-	pthread_mutex_lock(vals -> lock);
-		vals -> clients_arrived++;
-	pthread_mutex_unlock(vals -> lock);
 	return NULL;
+}
+
+void server_attend(int i)
+{
 }
 
 double* calc_service_times(int time, int s, int argc, double *rands)
