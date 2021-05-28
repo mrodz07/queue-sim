@@ -20,10 +20,24 @@
 #define SERVER_START_MSG		"[%s]: Cliente #%d atendido por servidor #%d\n"
 #define SERVER_END_MSG			"[%s]: Cliente #%d termina de ser atendido por servidor #%d\n"
 
+typedef struct sim_vals {
+	int client_num;
+	int server_num; 
+	int clients_served;
+	int clients_arrived;
+	double *client_time;
+	double *server_time;
+	pthread_t* client_threads;
+	pthread_t* server_threads;
+	pthread_mutex_t *lock;
+} sim_vals;
+
 int main();
 void read_queue(int *nc, int *ns, int *a, int *s);
 double* calc_arrival_times(int time, int a, int argc, double *rands);
 double* calc_service_times(int time, int s, int argc, double *rands);
-void start_simulation(int nc, int ns, double *crands, double *srands);
-void* client_generator(int clients, int argc, double *time_arr);
+void start_simulation(sim_vals* vals);
+void* client_generator(void* args);
+void* client(void* args);
+void* server(void* args);
 char* get_time();
