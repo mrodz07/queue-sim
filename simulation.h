@@ -9,8 +9,8 @@
 
 #define MINUTE							60
 #define TIME_SHORTENER			0.1
-#define TIME_WAIT						30	
-#define TIME_NOTICE_DIVISOR	30	
+#define TIME_WAIT						10	
+#define TIME_NOTICE_DIVISOR	1	
 
 #define MSG_NC							""
 #define MSG_NS							""
@@ -44,6 +44,7 @@ typedef struct server
 } server;
 
 int client_num = 0;
+int finished = 0;
 int server_num = 0; 
 int clients_served = 0;
 double *client_time = NULL;
@@ -53,6 +54,7 @@ server *server_arr = NULL;
 pthread_mutex_t c_lock = PTHREAD_MUTEX_INITIALIZER;
 pthread_mutex_t s_lock = PTHREAD_MUTEX_INITIALIZER;
 pthread_mutex_t t_lock = PTHREAD_MUTEX_INITIALIZER;
+pthread_mutex_t v_lock = PTHREAD_MUTEX_INITIALIZER;
 
 int main();
 void read_queue(int *nc, int *ns, int *a, int *s);

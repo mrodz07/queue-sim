@@ -82,7 +82,7 @@ void* server_generator()
 		pthread_create(&(server_arr[i].server_thread), NULL, server_main, (void*)&server_arr[i]);
 	}
 
-	while(clients_served != client_num) {
+	while(finished < client_num) {
 	}
 
 	return NULL;
@@ -117,7 +117,7 @@ void* server_main(void* args)
 	server* vals = (server*)args;
 	int tmp_client;
 
-	while(clients_served < client_num)
+	while(finished < client_num)
 	{
 		pthread_mutex_lock(&s_lock);
 		if(client_arr[clients_served].avail) {
@@ -131,6 +131,11 @@ void* server_main(void* args)
 
 			printf(SERVER_END_MSG, get_time(), client_arr[tmp_client].client_id, vals -> server_id);
 			client_arr[tmp_client].is_finished = 1;
+
+			pthread_mutex_lock(&v_lock);
+				finished++;
+			pthread_mutex_unlock(&v_lock);
+			
 		}
 		pthread_mutex_unlock(&s_lock);
 	}
