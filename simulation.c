@@ -33,12 +33,18 @@ int main()
 		pthread_create(&sim, NULL, start_simulation, NULL);
 		pthread_join(sim, NULL);
 
-		for(int i=0; i<client_num; i++) {
-			client_arr = NULL;
-			server_arr = NULL;
-			free(client_arr);
-			free(server_arr);
-		}
+		client_arr = NULL;
+		server_arr = NULL;
+		rands = NULL;
+		drands = NULL;
+		crands = NULL;
+		srands = NULL;
+		free(server_arr);
+		free(client_arr);
+		free(rands);
+		free(drands);
+		free(crands);
+		free(srands);
 	}
 	else
 	{
