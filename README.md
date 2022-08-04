@@ -1,4 +1,6 @@
-# INSTRUCCIONES PARA EJECUTAR PROGRAMA
+# SIMULADOR DE TEORÍA DE COLAS
+
+Programa realizado en C para simular el comportamiento de varios clientes consultando servidores.
 
 ## Compilar
 
