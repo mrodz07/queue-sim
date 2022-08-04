@@ -17,4 +17,4 @@ Programa realizado en C para simular el comportamiento de varios clientes consul
 
 ## Ejecutar ejemplo
 
-1. Revisa el archivo prueba.txt
+1. Usar el archivo prueba.txt como entrada al programa.
