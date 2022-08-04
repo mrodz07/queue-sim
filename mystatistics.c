@@ -1,4 +1,3 @@
-
 #include "mystatistics.h"
 
 double calc_davg(int argc, double *arr) 

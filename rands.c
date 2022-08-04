@@ -1,4 +1,3 @@
-
 #include "rands.h"
 
 int gen_rand(int mul, int inc, int mod, int sum)

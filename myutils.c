@@ -1,5 +1,3 @@
-
-
 #include "myutils.h"
 
 int count_num_in_arr(int num, int argc, double *arr)

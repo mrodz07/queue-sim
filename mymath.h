@@ -1,5 +1,3 @@
-
-
 #include <stdlib.h>
 
 int countprimes(int maxnum);
